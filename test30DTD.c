@@ -5,21 +5,18 @@
  * Creator: Brian Lam
  * Class: wed-16 kora  Tutor: Jordan Brown
  *
- * testTextGame.c
+ * test30DTD.c
  *
- * TESTS GAME CODE
+ * TEST GAME CODE
  *
  */
-
-
-
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
 
-#include "textGame.h"
+#include "30DTD.h"
 
 int main (int argc, char * argv[]) {
     printf ("Testing the game\n");
