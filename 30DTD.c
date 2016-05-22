@@ -89,6 +89,8 @@ typedef struct _game {
 //RUNGAME MAIN PROGRAM
 //##########################################################################
 
+// NOTE: WHEN FREEING GAME MEMORY, FREE THE ADDITIONAL MEMORY LOCATIONS BEFORE FREEING MAIN GAME STRUCT (g)
+
 int main (int argc, char *argv[]) {
 	printf("+++++++++++++++++++++++++++++++++++++++++\n");
 	printf("+............30 DAYS TO DIE.............+\n");
