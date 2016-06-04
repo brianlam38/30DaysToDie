@@ -17,6 +17,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 // survivor action codes
 #define USE_ENERGYBAR 0
@@ -50,15 +51,18 @@ typedef struct _game * Game;
 
 // game map data --> X(WEST = decrement, EAST = increment) / Y(NORTH = increment, SOUTH = decrement)
 typedef struct _map {
-	int background;				// hardcoded background descriptions
+	//int background;			// hardcoded background descriptions
 	int regions[NUM_REGIONS];	// maximum number of regions = 25
 	int XYcoord[5][5];			// hardcoded map
-	int itemLocation;			// item locations
+	int itemEnergyBarLocation;	// default = 0
+	int itemGunLocation;		// default = 0
+	int itemMarblesLocation;	// default = 0
 } map;
 
 // player data
 typedef struct _survivor {
 	int takeAction;				// take action (use item)
+	char str[20];				// stores player input data
 	int survivorLocation;		// survivor current location
 	int itemEnergyBar;			// default = 0
 	int itemGun;				// default = 0
@@ -89,20 +93,48 @@ typedef struct _game {
 //RUNGAME MAIN PROGRAM
 //##########################################################################
 
+Game newGame (int XYcoord[5][5]);
+
 // NOTE: WHEN FREEING GAME MEMORY, FREE THE ADDITIONAL MEMORY LOCATIONS BEFORE FREEING MAIN GAME STRUCT (g)
 
 int main (int argc, char *argv[]) {
-	printf("+++++++++++++++++++++++++++++++++++++++++\n");
-	printf("+............30 DAYS TO DIE.............+\n");
-	printf("+.............By Brian Lam..............+\n");
-	printf("+.......................................+\n");
-	printf("+.............INSTRUCTIONS..............+\n");
-	printf("+....There are 3 killers hunting you....+\n");
-	printf("+..........Survive for 30 days..........+\n");
-	printf("+.......................................+\n");
-	printf("+++++++++++++++++++++++++++++++++++++++++\n");
 
-	printf("Game end...\n");
+	// Game Introduction
+	printf("+++++++++++++++++++++++++++++++++++++++++++++++\n");
+	printf("+...............30 DAYS TO DIE................+\n");
+	printf("+.............................................+\n");
+	printf("+................INSTRUCTIONS.................+\n");
+	printf("+.......There are 3 killers hunting you.......+\n");
+	printf("+.............Survive for 30 days.............+\n");
+	printf("+............Find items to help you...........+\n");
+	printf("+.............................................+\n");
+	printf("+++++++++++++++++++++++++++++++++++++++++++++++\n\n");
+
+	printf("---------Press the ENTER key to start----------\n\n");
+	getchar();
+
+	// Initialises game
+	Game g = newGame(XYcoord[5][5]);
+
+	while (g->turnCount != 0) {
+		// Trigger current inventory
+		// Trigger item discovery
+		// Print background descr
+		// Trigger enemy encounter
+		// Print available moves to player
+		// Scanf player action then strcmp to see if it is a possible action
+		// Print result + endgame / restart option available
+	}
+
+
+/*
+	printf("-----What is your name, survivor?-----\n\n");
+	fgets(str, 10, stdin);
+	printf("Welcome, %s, you have 30 days to survive.\n");
+*/
+
+	printf("End of game...\n");
+
 	return EXIT_SUCCESS;
 }
 
@@ -110,18 +142,28 @@ int main (int argc, char *argv[]) {
 //BEGINNING OF SETTER INTERFACE FUNCTIONS
 //##########################################################################
 
-Game newGame (void) {				// initialises game map + descriptions, survivor + killer + items starting positions
+Game newGame (int XYcoord[5][5]) {				// REMOVE: initialises game map + descriptions, survivor + killer + items starting positions
 
-	Game g = malloc(sizeof(g));									// setting aside memory for game
+	assert(malloc(sizeof(Game)) != NULL);
+	Game g = malloc(sizeof(g));									
 
-	g->turnCount = DAYSTOSURVIVE;								// initialise game turn = 30
+	// initialise game turn = 30
+	g->turnCount = DAYSTOSURVIVE;								
 
-	g->survivorData.itemEnergyBar = FALSE;						// initialise survivor items
+	// initialise survivor items
+	g->survivorData.itemEnergyBar = g->mapData.XYcoord[0][0];				
+	g->survivorData.itemGun = g->mapData.XYcoord[0][0];
+	g->survivorData.itemMarbles = g->mapData.XYcoord[0][0];
+	g->survivorData.itemReasoning = g->mapData.XYcoord[0][0];
+
+	// initialise item location
+	g->survivorData.itemEnergyBar = FALSE;						
 	g->survivorData.itemGun = FALSE;
 	g->survivorData.itemMarbles = FALSE;
 	g->survivorData.itemReasoning = TRUE;
 
-	g->survivorData.survivorLocation = g->mapData.XYcoord[0][0]; // initialise survivor + killer locations
+	// initialise survivor + killer locations
+	g->survivorData.survivorLocation = g->mapData.XYcoord[0][0]; 
 	g->enemy1.killerLocation = g->mapData.XYcoord[0][4];
 	g->enemy2.killerLocation = g->mapData.XYcoord[4][0];
 	g->enemy3.killerLocation = g->mapData.XYcoord[4][4];
@@ -129,12 +171,21 @@ Game newGame (void) {				// initialises game map + descriptions, survivor + kill
 	return g;
 }
 
+// Disposes game data upon new game or exit
+void disposeGame (Game g) {
+	free(g);
+}
+
 //##########################################################################
 //BEGINNING OF GETTER INTERFACE FUNCTION
 //##########################################################################
 
 
+
 /*
+int takeAction() {			// Survivor item actions
+}
+
 int takeAction() {			// Survivor item actions
 }
 
@@ -163,4 +214,8 @@ int getCurrentLocation() {	// Gets current survivor location
 int getKillersLocations()	 {	// Gets current location of all killers
 }
 */
+
+
+
+
 
