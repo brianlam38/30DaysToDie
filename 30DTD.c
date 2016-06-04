@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <unistd.h>
 
 // survivor action codes
 #define USE_ENERGYBAR 0
@@ -64,10 +65,11 @@ typedef struct _survivor {
 	int takeAction;				// take action (use item)
 	char str[20];				// stores player input data
 	int survivorLocation;		// survivor current location
-	int itemEnergyBar;			// default = 0
-	int itemGun;				// default = 0
-	int itemMarbles;			// default = 0
-	int itemReasoning;			// player always has this item --> default = 1
+	int inventory[3];
+	//int itemEnergyBar;			// default = 0
+	//int itemGun;				// default = 0
+	//int itemMarbles;			// default = 0
+	//int itemReasoning;			// player always has this item --> default = 1
 } survivor;
 
 // enemy data --> IDEAS: enemy action diceroll, enemy chance encounters
@@ -93,8 +95,6 @@ typedef struct _game {
 //RUNGAME MAIN PROGRAM
 //##########################################################################
 
-Game newGame (int XYcoord[5][5]);
-
 // NOTE: WHEN FREEING GAME MEMORY, FREE THE ADDITIONAL MEMORY LOCATIONS BEFORE FREEING MAIN GAME STRUCT (g)
 
 int main (int argc, char *argv[]) {
@@ -114,16 +114,45 @@ int main (int argc, char *argv[]) {
 	getchar();
 
 	// Initialises game
-	Game g = newGame(XYcoord[5][5]);
+	assert(malloc(sizeof(Game)) != NULL);
+	Game g = malloc(sizeof(g));			
+	assert(g != NULL);
+	printf("Game initialised...\n");						
+
+	// initialise game turn = 30
+	g->turnCount = DAYSTOSURVIVE;
+	assert(DAYSTOSURVIVE == 30);
+	printf("Turns initialised...\n");								
+
+	// initialise item location
+	g->mapData.itemEnergyBarLocation = g->mapData.XYcoord[0][0];				
+	g->mapData.itemGunLocation = g->mapData.XYcoord[0][0];
+	g->mapData.itemMarblesLocation = g->mapData.XYcoord[0][0];	
+
+	// initialise survivor items
+	g->survivorData.inventory[0] = FALSE;	// energy bar
+	g->survivorData.inventory[1] = FALSE;	// gun
+	g->survivorData.inventory[2] = FALSE;	// marbles
+
+	// initialise survivor + killer locations
+	g->survivorData.survivorLocation = g->mapData.XYcoord[0][0]; 
+	g->enemy1.killerLocation = g->mapData.XYcoord[0][4];
+	g->enemy2.killerLocation = g->mapData.XYcoord[4][0];
+	g->enemy3.killerLocation = g->mapData.XYcoord[4][4];
 
 	while (g->turnCount != 0) {
-		// Trigger current inventory
+		// Show player inventory
+		if (g->survivorData.inventory[] == )
+
 		// Trigger item discovery
+
 		// Print background descr
 		// Trigger enemy encounter
 		// Print available moves to player
 		// Scanf player action then strcmp to see if it is a possible action
 		// Print result + endgame / restart option available
+		g->turnCount--;
+		printf("The next turn is %d", g->turnCount);
 	}
 
 
@@ -139,37 +168,8 @@ int main (int argc, char *argv[]) {
 }
 
 //##########################################################################
-//BEGINNING OF SETTER INTERFACE FUNCTIONS
+//SETTER INTERFACE FUNCTIONS
 //##########################################################################
-
-Game newGame (int XYcoord[5][5]) {				// REMOVE: initialises game map + descriptions, survivor + killer + items starting positions
-
-	assert(malloc(sizeof(Game)) != NULL);
-	Game g = malloc(sizeof(g));									
-
-	// initialise game turn = 30
-	g->turnCount = DAYSTOSURVIVE;								
-
-	// initialise survivor items
-	g->survivorData.itemEnergyBar = g->mapData.XYcoord[0][0];				
-	g->survivorData.itemGun = g->mapData.XYcoord[0][0];
-	g->survivorData.itemMarbles = g->mapData.XYcoord[0][0];
-	g->survivorData.itemReasoning = g->mapData.XYcoord[0][0];
-
-	// initialise item location
-	g->survivorData.itemEnergyBar = FALSE;						
-	g->survivorData.itemGun = FALSE;
-	g->survivorData.itemMarbles = FALSE;
-	g->survivorData.itemReasoning = TRUE;
-
-	// initialise survivor + killer locations
-	g->survivorData.survivorLocation = g->mapData.XYcoord[0][0]; 
-	g->enemy1.killerLocation = g->mapData.XYcoord[0][4];
-	g->enemy2.killerLocation = g->mapData.XYcoord[4][0];
-	g->enemy3.killerLocation = g->mapData.XYcoord[4][4];
-
-	return g;
-}
 
 // Disposes game data upon new game or exit
 void disposeGame (Game g) {
@@ -179,8 +179,11 @@ void disposeGame (Game g) {
 //##########################################################################
 //BEGINNING OF GETTER INTERFACE FUNCTION
 //##########################################################################
+/*
+char availableActions (Game g) {
 
-
+}
+*/
 
 /*
 int takeAction() {			// Survivor item actions
