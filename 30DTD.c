@@ -7,8 +7,8 @@
  *
  * 30DTD.h v1.01
  * 		edit log -
- *		1.00 basic game
- *		1.01 added macro titles + more comments
+ *		1.00 basic game with structs
+ *		1.01 put more defines & reduced magic no's
  *		1.02
  *		1.03
  *
@@ -24,7 +24,6 @@
 #define USE_ENERGYBAR 0
 #define USE_GUN	 	  1
 #define USE_MARBLES   2
-#define USE_REASONING 3
 
 // survivor item status
 #define FALSE 0
@@ -43,6 +42,7 @@
 // default game
 #define DAYSTOSURVIVE 30		// starting game turn OR no. of days before win game
 #define NUM_REGIONS   25		// 5 x 5 square map
+#define TOTAL_GAME_ITEMS 3		// total number of game items
 
 //##########################################################################
 //BEGINNING OF STRUCT DEFINITION
@@ -65,7 +65,7 @@ typedef struct _survivor {
 	int takeAction;				// take action (use item)
 	char str[20];				// stores player input data
 	int survivorLocation;		// survivor current location
-	int inventory[3];
+	int inventory[TOTAL_GAME_ITEMS];
 	//int itemEnergyBar;			// default = 0
 	//int itemGun;				// default = 0
 	//int itemMarbles;			// default = 0
@@ -92,6 +92,15 @@ typedef struct _game {
 } game;
 
 //##########################################################################
+//FUNCTION DECLARATIONS
+//##########################################################################
+
+
+void getCurrentTurn(Game g);
+void getCurrentInventory(Game g);
+void disposeGame (Game g);
+
+//##########################################################################
 //RUNGAME MAIN PROGRAM
 //##########################################################################
 
@@ -113,7 +122,7 @@ int main (int argc, char *argv[]) {
 	printf("---------Press the ENTER key to start----------\n\n");
 	getchar();
 
-	// Initialises game
+	// Initialise game
 	assert(malloc(sizeof(Game)) != NULL);
 	Game g = malloc(sizeof(g));			
 	assert(g != NULL);
@@ -141,8 +150,10 @@ int main (int argc, char *argv[]) {
 	g->enemy3.killerLocation = g->mapData.XYcoord[4][4];
 
 	while (g->turnCount != 0) {
+		// Show current turn
+		getCurrentTurn(g);
 		// Show player inventory
-		if (g->survivorData.inventory[] == )
+		getCurrentInventory(g);
 
 		// Trigger item discovery
 
@@ -151,8 +162,8 @@ int main (int argc, char *argv[]) {
 		// Print available moves to player
 		// Scanf player action then strcmp to see if it is a possible action
 		// Print result + endgame / restart option available
+
 		g->turnCount--;
-		printf("The next turn is %d", g->turnCount);
 	}
 
 
@@ -161,6 +172,7 @@ int main (int argc, char *argv[]) {
 	fgets(str, 10, stdin);
 	printf("Welcome, %s, you have 30 days to survive.\n");
 */
+	disposeGame(g);
 
 	printf("End of game...\n");
 
@@ -176,15 +188,6 @@ void disposeGame (Game g) {
 	free(g);
 }
 
-//##########################################################################
-//BEGINNING OF GETTER INTERFACE FUNCTION
-//##########################################################################
-/*
-char availableActions (Game g) {
-
-}
-*/
-
 /*
 int takeAction() {			// Survivor item actions
 }
@@ -199,14 +202,53 @@ int enemyAction() {			// Encounter enemy --> enemy triggers action
 }
 */
 
-/* GETTER FUNCTIONS */
+
+//##########################################################################
+//GETTER INTERFACE FUNCTIONS
+//##########################################################################
+
+// Print current turn number
+void getCurrentTurn(Game g) {
+	if (g->turnCount != 1) {
+		printf("---------YOU HAVE %d DAYS TO SURVIVE----------\n\n", g->turnCount);
+	} else {
+		printf("---------SURVIVE FOR ONE MORE DAY----------\n\n");			
+	}
+}
+
+// Get current survivor items
+void getCurrentInventory(Game g) {		
+
+	printf("YOUR ITEMS:");
+
+	if ((g->survivorData.inventory[0] == FALSE) &&						
+		(g->survivorData.inventory[1] == FALSE) &&
+		(g->survivorData.inventory[2] == FALSE)) {
+		printf("-- You currently have no items --\n\n");
+	} else {
+		if (g->survivorData.inventory[0] == TRUE) {
+			printf("[energy bar]. ");
+		} else if (g->survivorData.inventory[0] == FALSE) {
+			printf("[EMPTY]. ");			
+		} else if (g->survivorData.inventory[1] == TRUE) {
+			printf("[gun]. ");
+		} else if (g->survivorData.inventory[1] == FALSE) {
+			printf("[EMPTY]. ");
+		} else if (g->survivorData.inventory[2] == TRUE) {
+			printf("[marbles]. ");
+		} else if (g->survivorData.inventory[2] == FALSE) {
+			printf("[EMPTY]. ");
+		}
+	}
+}
 
 /*
-int getCurrentItems() {		// Get current survivor items
-}
+char availableActions (Game g) {
 
-int getCurrentTurn() {		// Turn starts at 30, then decreases by 1 per player action
 }
+*/
+
+/*
 
 int getLegalPath() {		// Gets + displays available paths to survivor
 }
