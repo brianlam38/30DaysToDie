@@ -64,7 +64,7 @@ typedef struct _map {
 typedef struct _survivor {
 	int takeAction;				// take action (use item)
 	char str[20];				// stores player input data
-	int survivorLocation;		// survivor current location
+	int sLocation;		// survivor current location
 	int inventory[TOTAL_GAME_ITEMS];
 	//int itemEnergyBar;			// default = 0
 	//int itemGun;				// default = 0
@@ -81,7 +81,7 @@ typedef struct _killer {
 // main game data --> IDEAS:
 typedef struct _game {
 	map mapData;				// g->mapData.xxx
-	survivor survivorData;	    // g->survivorData.xxx
+	survivor sData;	    // g->sData.xxx
 	killer enemy1;				// g->enemy1.xxx
 	killer enemy2;
 	killer enemy3;
@@ -101,7 +101,7 @@ void getCurrentInventory(Game g);
 void disposeGame (Game g);
 
 //##########################################################################
-//RUNGAME MAIN PROGRAM
+//MAIN PROGRAM
 //##########################################################################
 
 // NOTE: WHEN FREEING GAME MEMORY, FREE THE ADDITIONAL MEMORY LOCATIONS BEFORE FREEING MAIN GAME STRUCT (g)
@@ -139,19 +139,25 @@ int main (int argc, char *argv[]) {
 	g->mapData.itemMarblesLocation = g->mapData.XYcoord[0][0];	
 
 	// initialise survivor items
-	g->survivorData.inventory[0] = FALSE;	// energy bar
-	g->survivorData.inventory[1] = FALSE;	// gun
-	g->survivorData.inventory[2] = FALSE;	// marbles
+	g->sData.inventory[0] = FALSE;	// energy bar
+	g->sData.inventory[1] = FALSE;	// gun
+	g->sData.inventory[2] = FALSE;	// marbles
 
 	// initialise survivor + killer locations
-	g->survivorData.survivorLocation = g->mapData.XYcoord[0][0]; 
+	g->sData.sLocation = g->mapData.XYcoord[0][0]; 
 	g->enemy1.killerLocation = g->mapData.XYcoord[0][4];
 	g->enemy2.killerLocation = g->mapData.XYcoord[4][0];
 	g->enemy3.killerLocation = g->mapData.XYcoord[4][4];
 
+	// MAIN RUNGAME FUNCTION
 	while (g->turnCount != 0) {
+
 		// Show current turn
 		getCurrentTurn(g);
+
+		// Trigger item discovery
+
+
 		// Show player inventory
 		getCurrentInventory(g);
 
@@ -188,6 +194,18 @@ void disposeGame (Game g) {
 	free(g);
 }
 
+// Trigger item discovery
+void itemDiscovery (game g) {
+	if ((g->sData.sLocation == g->mapData.itemEnergyBarLocation &&)
+		(g->sData.inventory[0] == FALSE)) {
+
+	}
+
+	g->mapData.itemEnergyBarLocation = g->mapData.XYcoord[0][0];				
+	g->mapData.itemGunLocation = g->mapData.XYcoord[0][0];
+	g->mapData.itemMarblesLocation = g->mapData.XYcoord[0][0];		
+}
+
 /*
 int takeAction() {			// Survivor item actions
 }
@@ -221,22 +239,22 @@ void getCurrentInventory(Game g) {
 
 	printf("YOUR ITEMS:");
 
-	if ((g->survivorData.inventory[0] == FALSE) &&						
-		(g->survivorData.inventory[1] == FALSE) &&
-		(g->survivorData.inventory[2] == FALSE)) {
+	if ((g->sData.inventory[0] == FALSE) &&						
+		(g->sData.inventory[1] == FALSE) &&
+		(g->sData.inventory[2] == FALSE)) {
 		printf("-- You currently have no items --\n\n");
 	} else {
-		if (g->survivorData.inventory[0] == TRUE) {
+		if (g->sData.inventory[0] == TRUE) {
 			printf("[energy bar]. ");
-		} else if (g->survivorData.inventory[0] == FALSE) {
+		} else if (g->sData.inventory[0] == FALSE) {
 			printf("[EMPTY]. ");			
-		} else if (g->survivorData.inventory[1] == TRUE) {
+		} else if (g->sData.inventory[1] == TRUE) {
 			printf("[gun]. ");
-		} else if (g->survivorData.inventory[1] == FALSE) {
+		} else if (g->sData.inventory[1] == FALSE) {
 			printf("[EMPTY]. ");
-		} else if (g->survivorData.inventory[2] == TRUE) {
+		} else if (g->sData.inventory[2] == TRUE) {
 			printf("[marbles]. ");
-		} else if (g->survivorData.inventory[2] == FALSE) {
+		} else if (g->sData.inventory[2] == FALSE) {
 			printf("[EMPTY]. ");
 		}
 	}
