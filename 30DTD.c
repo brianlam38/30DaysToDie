@@ -12,7 +12,7 @@
  *		1.02 added itemDiscovery
  *		1.03 added pathing system
  *		1.04 added 1 enemy + encounter
- *		1.
+ *
  */
 
 #include <stdio.h>
@@ -60,7 +60,6 @@ typedef struct _map {
 
 // player data
 typedef struct _survivor {
-	int takeAction;
 	int survivorLocation;
 	int itemEnergyBar;			// default = FALSE
 	int itemGun;				// default = FALSE
@@ -92,8 +91,8 @@ void itemDiscovery (Game g);
 void getCurrentInventory(Game g);
 void enemyEncounter (Game g);
 //void enemyMovement (Game g);
-void disposeGame (Game g);
 void takeMovement(Game g);
+void disposeGame (Game g);
 
 // ##########################################################################
 // MAIN PROGRAM
